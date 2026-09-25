@@ -15,13 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from music import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),  #шляхи входу/виходу
+    path('accounts/signup/', views.SignUpView.as_view(), name='signup'),  #Реєстрація
+    
     path('', views.AlbumListView.as_view(), name='album_list'),
     path('top-albums/', views.TopAlbumsView.as_view(), name='top_albums'),
+    path('albums/my/', views.MyAlbumsView.as_view(), name='my_albums'),  # Мої альбоми 
     path('albums/new/', views.AlbumCreateView.as_view(), name='album_create'),
     path('albums/<int:pk>/', views.AlbumDetailView.as_view(), name='album_detail'),
     path('albums/<int:pk>/edit/', views.AlbumUpdateView.as_view(), name='album_update'),
