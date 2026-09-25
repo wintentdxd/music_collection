@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.urls import reverse
 
 class Genre(models.Model):
     name = models.CharField(max_length=50, verbose_name="Жанр")
@@ -21,7 +22,9 @@ class Album(models.Model):
         ('lp', 'Повноформатний альбом (LP)'),
         ('ep', 'Міні-альбом (EP)'),
         ('single', 'Сінгл'),
+        
     ]
+    
 
     title = models.CharField(max_length=150, verbose_name="Назва альбому")
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name='albums', verbose_name="Виконавець")
@@ -33,6 +36,11 @@ class Album(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(5)],
         verbose_name="Оцінка (1-5)"
     )
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('album_detail', kwargs={'pk': self.pk})
 
     class Meta:
         ordering = ['-release_date']  # Сортування за замовчуванням (новіші першими)

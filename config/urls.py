@@ -20,5 +20,11 @@ from music import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('music/', views.music_list, name='music_list'),
+    path('', views.AlbumListView.as_view(), name='album_list'),
+    path('top-albums/', views.TopAlbumsView.as_view(), name='top_albums'),
+    path('albums/new/', views.AlbumCreateView.as_view(), name='album_create'),
+    path('albums/<int:pk>/', views.AlbumDetailView.as_view(), name='album_detail'),
+    path('albums/<int:pk>/edit/', views.AlbumUpdateView.as_view(), name='album_update'),
+    path('albums/<int:pk>/delete/', views.AlbumDeleteView.as_view(), name='album_delete'),
+    path('artists/', views.ArtistListView.as_view(), name='artist_list'),
 ]

@@ -1,0 +1,38 @@
+{% extends 'music/base.html' %}
+
+{% block title %}{{ album.title }}{% endblock %}
+
+{% block content %}
+  <h1>{{ album.title }}</h1>
+  
+  <p><strong>Виконавець:</strong> {{ album.artist.name }}</p>
+  <p><strong>Дата релізу:</strong> {{ album.release_date|default:"Не вказано" }}</p>
+  <p><strong>Оцінка:</strong> {{ album.rating|floatformat:1 }} / 5</p>
+
+  <div style="margin: 15px 0;">
+    <a href="{% url 'album_update' album.pk %}" class="btn">Редагувати</a>
+    <a href="{% url 'album_delete' album.pk %}" class="btn btn-danger">Видалити</a>
+  </div>
+
+  <h3>Список треків:</h3>
+  <ul>
+    {% for track in album.tracks.all %}
+      <li>{{ track.title }} — <small>{{ track.duration_formatted }}</small></li>
+    {% empty %}
+      <li><em>Треків для цього альбому ще не додано.</em></li>
+    {% endfor %}
+  </ul>
+
+  {% if other_albums %}
+    <hr>
+    <h3>Інші альбоми цього виконавця:</h3>
+    <ul>
+      {% for other in other_albums %}
+        <li><a href="{% url 'album_detail' other.pk %}">{{ other.title }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <br>
+  <a href="{% url 'album_list' %}">&larr; Назад до списку альбомів</a>
+{% endblock %}

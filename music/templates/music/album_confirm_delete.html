@@ -1,0 +1,12 @@
+{% extends 'music/base.html' %}
+
+{% block content %}
+  <h1>Видалити «{{ object.title }}»?</h1>
+  <p>Ви впевнені, що хочете видалити цей альбом? Цю дію неможливо скасувати.</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Так, видалити</button>
+    <a href="{% url 'album_detail' object.pk %}" class="btn btn-secondary">Скасувати</a>
+  </form>
+{% endblock %}
