@@ -1,0 +1,23 @@
+{% extends 'music/base.html' %}
+
+{% block title %}{{ album.title }}{% endblock %}
+
+{% block content %}
+  <h1>{{ album.title }}</h1>
+  
+  <p><strong>Виконавець:</strong> {{ album.artist.name }} {% if album.artist.country %}({{ album.artist.country }}){% endif %}</p>
+  <p><strong>Дата релізу:</strong> {{ album.release_date }}</p>
+  <p><strong>Оцінка:</strong> {{ album.rating|floatformat:1 }} / 5</p>
+
+  <h3>Список треків:</h3>
+  <ul>
+    {% for track in album.tracks.all %}
+      <li>{{ track.title }} — <small>{{ track.duration_formatted }}</small></li>
+    {% empty %}
+      <li><em>Треків для цього альбому ще не додано.</em></li>
+    {% endfor %}
+  </ul>
+
+  <br>
+  <a href="{% url 'album_list' %}">&larr; Назад до списку альбомів</a>
+{% endblock %}

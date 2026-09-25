@@ -1,0 +1,21 @@
+{% extends 'music/base.html' %}
+
+{% block title %}Список альбомів{% endblock %}
+
+{% block content %}
+  <h1>📀 Каталог альбомів</h1>
+
+  {% for album in albums %}
+    <div class="item">
+      <h3>
+        <a href="{% url 'album_detail' album.pk %}">{{ album.title }}</a> 
+        <span class="badge">{{ album.release_date|default:"Дата невідома" }}</span>
+      </h3>
+      <p><strong>Виконавець:</strong> {{ album.artist.name }}</p>
+    </div>
+  {% empty %}
+    <p>Наразі альбомів у колекції немає.</p>
+  {% endfor %}
+
+  <p><em>Усього альбомів: {{ albums.count }}</em></p>
+{% endblock %}

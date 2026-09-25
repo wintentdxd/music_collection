@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Музична Колекція{% endblock %}</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; background-color: #f8f9fa; color: #333; }
+        nav { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #0066cc; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        .container { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .item { padding: 15px 0; border-bottom: 1px solid #eee; }
+        .item:last-child { border-bottom: none; }
+        h1 { color: #1a1a1a; margin-top: 0; }
+        .badge { background: #e9ecef; padding: 3px 8px; border-radius: 4px; font-size: 0.85em; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'album_list' %}">📀 Альбоми</a>
+        <a href="{% url 'artist_list' %}">🎤 Виконавці</a>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
