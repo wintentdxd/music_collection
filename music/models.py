@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
+from django.contrib.auth.models import User
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=50, verbose_name="Жанр")
@@ -24,8 +26,13 @@ class Album(models.Model):
         ('single', 'Сінгл'),
         
     ]
-    
-
+    owner = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='albums', 
+        null=True, 
+        blank=True,
+    )
     title = models.CharField(max_length=150, verbose_name="Назва альбому")
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name='albums', verbose_name="Виконавець")
     genres = models.ManyToManyField(Genre, blank=True, related_name='albums', verbose_name="Жанри")
@@ -36,17 +43,14 @@ class Album(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(5)],
         verbose_name="Оцінка (1-5)"
     )
+    class Meta:
+        ordering = ['-release_date']
+
     def __str__(self):
-        return self.title
+        return f"{self.artist.name} – {self.title}"
 
     def get_absolute_url(self):
         return reverse('album_detail', kwargs={'pk': self.pk})
-
-    class Meta:
-        ordering = ['-release_date']  # Сортування за замовчуванням (новіші першими)
-
-    def __str__(self):
-        return f"{self.artist.name} — {self.title}"
 
 
 class Track(models.Model):

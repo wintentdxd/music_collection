@@ -9,10 +9,12 @@
   <p><strong>Дата релізу:</strong> {{ album.release_date|default:"Не вказано" }}</p>
   <p><strong>Оцінка:</strong> {{ album.rating|floatformat:1 }} / 5</p>
 
+ {% if user == album.owner or user.is_staff %}
   <div style="margin: 15px 0;">
     <a href="{% url 'album_update' album.pk %}" class="btn">Редагувати</a>
     <a href="{% url 'album_delete' album.pk %}" class="btn btn-danger">Видалити</a>
   </div>
+{% endif %}
 
   <h3>Список треків:</h3>
   <ul>

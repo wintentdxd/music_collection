@@ -1,22 +1,30 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
-from .models import Album, Artist
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.forms import UserCreationForm
 
-# ЧАСТИНА 1: CBV ДЛЯ ПЕРЕГЛЯДУ
+from .models import Album, Artist, Genre
 
-# 1. Список альбомів з пагінацією
+
+# View для реєстрації
+class SignUpView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'registration/signup.html'
+    success_url = reverse_lazy('login')
+
+
+# Список усіх альбомів
 class AlbumListView(ListView):
     model = Album
     template_name = 'music/album_list.html'
     context_object_name = 'albums'
-    ordering = ['title']
     paginate_by = 5
 
 
-# 2. Другий список із фільтрацією
+# Топ альбоми
 class TopAlbumsView(ListView):
     model = Album
     template_name = 'music/album_list.html'
@@ -24,52 +32,62 @@ class TopAlbumsView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        return Album.objects.filter(rating__gte=4).order_by('-rating')
+        return Album.objects.filter(rating=5)
 
 
-# 3. Деталі альбому з додатковим контекстом
+# Деталі альбому
 class AlbumDetailView(DetailView):
     model = Album
     template_name = 'music/album_detail.html'
     context_object_name = 'album'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['other_albums'] = Album.objects.filter(
-            artist=self.object.artist
-        ).exclude(pk=self.object.pk)
-        return context
 
-
-# 4. Список виконавців
-class ArtistListView(ListView):
-    model = Artist
-    template_name = 'music/artist_list.html'
-    context_object_name = 'artists'
-
-
-# ЧАСТИНА 2: CRUD ОПЕРАЦІЇ
-class AlbumCreateView(CreateView):
+# Створити альбом (автоматично проставляємо owner)
+class AlbumCreateView(LoginRequiredMixin, CreateView):
     model = Album
     fields = ['title', 'artist', 'genres', 'album_type', 'release_date', 'rating']
     template_name = 'music/album_form.html'
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
-class AlbumUpdateView(UpdateView):
+
+# Редагувати альбом (тільки власник або staff)
+class AlbumUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Album
     fields = ['title', 'artist', 'genres', 'album_type', 'release_date', 'rating']
     template_name = 'music/album_form.html'
 
+    def test_func(self):
+        album = self.get_object()
+        return album.owner == self.request.user or self.request.user.is_staff
 
-class AlbumDeleteView(DeleteView):
+
+# Видалити альбом (тільки власник або staff)
+class AlbumDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Album
     template_name = 'music/album_confirm_delete.html'
     success_url = reverse_lazy('album_list')
 
+    def test_func(self):
+        album = self.get_object()
+        return album.owner == self.request.user or self.request.user.is_staff
 
-# def album_list(request):
-#     ...
-# def album_detail(request, pk):
-#     ...
-# def artist_list(request):
-#     ...
+
+# Мої альбоми
+class MyAlbumsView(LoginRequiredMixin, ListView):
+    model = Album
+    template_name = 'music/album_list.html'
+    context_object_name = 'albums'
+    paginate_by = 5
+
+    def get_queryset(self):
+        return Album.objects.filter(owner=self.request.user)
+
+
+# Список виконавців
+class ArtistListView(ListView):
+    model = Artist
+    template_name = 'music/artist_list.html'
+    context_object_name = 'artists'
