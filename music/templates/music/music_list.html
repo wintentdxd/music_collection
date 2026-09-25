@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Музична Колекція</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f4f9; }
+        .album { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #333; }
+        ul { list-style-type: square; }
+    </style>
+</head>
+<body>
+    <h1>🎵 Моя Музична Колекція</h1>
+    {% for album in albums %}
+        <div class="album">
+            <h2>{{ album.title }} — {{ album.artist.name }}</h2>
+            <p><strong>Жанри:</strong> {% for genre in album.genres.all %}{{ genre.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+            <p><strong>Дата релізу:</strong> {{ album.release_date }} | <strong>Оцінка:</strong> {{ album.rating }}/5</p>
+            <h3>Треки:</h3>
+            <ul>
+                {% for track in album.track_set.all %}
+                    <li>{{ track.title }} ({{ track.duration_formatted }})</li>
+                {% empty %}
+                    <li>Треків поки немає</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% empty %}
+        <p>Колекція порожня.</p>
+    {% endfor %}
+</body>
+</html>
