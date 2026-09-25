@@ -9,7 +9,6 @@
     <div class="item">
       <h3>
         <a href="{% url 'album_detail' album.pk %}">{{ album.title }}</a> 
-        <span class="badge">{{ album.release_date|default:"Дата невідома" }}</span>
       </h3>
       <p><strong>Виконавець:</strong> {{ album.artist.name }}</p>
     </div>
@@ -17,5 +16,19 @@
     <p>Наразі альбомів у колекції немає.</p>
   {% endfor %}
 
-  <p><em>Усього альбомів: {{ albums.count }}</em></p>
+  {% if is_paginated %}
+    <nav class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">&larr; Назад</a>
+      {% endif %}
+
+      Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Далі &rarr;</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+
+  <p style="margin-top:20px;"><em>Усього альбомів у базі: {{ paginator.count|default:albums.count }}</em></p>
 {% endblock %}

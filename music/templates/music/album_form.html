@@ -1,0 +1,12 @@
+{% extends 'music/base.html' %}
+
+{% block content %}
+  <h1>{% if object %}Редагування альбому{% else %}Додавання нового альбому{% endif %}</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Зберегти</button>
+    <a href="{% url 'album_list' %}" class="btn btn-secondary">Скасувати</a>
+  </form>
+{% endblock %}
